@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>iU 江端教授クイズ</title>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #172033;
+      --sub: #5b6475;
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --ok: #16a34a;
+      --ng: #dc2626;
+      --border: #e5e7eb;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Hiragino Sans", "Yu Gothic", Meiryo, sans-serif;
+      background: linear-gradient(160deg, #eef4ff 0%, #f8fafc 55%, #ffffff 100%);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 760px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.10);
+      padding: 28px;
+      overflow: hidden;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #dbeafe;
+      color: #1e40af;
+      font-weight: 700;
+      border-radius: 999px;
+      padding: 8px 14px;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      font-size: clamp(28px, 6vw, 44px);
+      line-height: 1.15;
+      margin: 0 0 12px;
+      letter-spacing: -0.03em;
+    }
+
+    h2 {
+      font-size: clamp(22px, 5vw, 32px);
+      line-height: 1.35;
+      margin: 8px 0 20px;
+    }
+
+    p {
+      color: var(--sub);
+      line-height: 1.75;
+      margin: 0 0 20px;
+      font-size: 16px;
+    }
+
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+      color: var(--sub);
+      font-weight: 700;
+      font-size: 14px;
+    }
+
+    .progress {
+      height: 10px;
+      background: #e5e7eb;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 24px;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--primary), #60a5fa);
+      transition: width 0.25s ease;
+    }
+
+    .choices {
+      display: grid;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    button {
+      appearance: none;
+      border: none;
+      border-radius: 16px;
+      padding: 16px 18px;
+      font-size: 17px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.12s ease, background 0.12s ease, border-color 0.12s ease;
+      text-align: left;
+    }
+
+    button:active { transform: scale(0.99); }
+
+    .choice {
+      background: #ffffff;
+      border: 2px solid var(--border);
+      color: var(--text);
+    }
+
+    .choice:hover {
+      border-color: #93c5fd;
+      background: #eff6ff;
+    }
+
+    .choice.correct {
+      border-color: var(--ok);
+      background: #ecfdf5;
+    }
+
+    .choice.wrong {
+      border-color: var(--ng);
+      background: #fef2f2;
+    }
+
+    .primary {
+      width: 100%;
+      text-align: center;
+      background: var(--primary);
+      color: white;
+      margin-top: 18px;
+    }
+
+    .primary:hover { background: var(--primary-dark); }
+
+    .ghost {
+      width: 100%;
+      text-align: center;
+      background: #f1f5f9;
+      color: #334155;
+      margin-top: 12px;
+    }
+
+    .feedback {
+      margin-top: 20px;
+      padding: 16px;
+      border-radius: 18px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      display: none;
+    }
+
+    .feedback strong {
+      display: block;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .feedback.ok strong { color: var(--ok); }
+    .feedback.ng strong { color: var(--ng); }
+
+    .result-score {
+      font-size: clamp(48px, 12vw, 84px);
+      font-weight: 900;
+      letter-spacing: -0.06em;
+      color: var(--primary);
+      margin: 8px 0;
+    }
+
+    .small {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    @media (max-width: 520px) {
+      body { padding: 12px; }
+      .card { padding: 22px 18px; border-radius: 20px; }
+      button { font-size: 16px; padding: 15px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <section class="card" id="startScreen">
+      <div class="badge">iU Online Campus</div>
+      <h1>江端教授クイズ</h1>
+      <p>
+        iUと江端教授をもっと身近に感じてもらうための、7問クイズです。<br>
+        直感で答えてみてください！
+      </p>
+      <button class="primary" onclick="startQuiz()">クイズを始める</button>
+      <div class="small">所要時間：約2分</div>
+    </section>
+
+    <section class="card" id="quizScreen" style="display:none;">
+      <div class="meta">
+        <span id="questionCount"></span>
+        <span id="scoreCount"></span>
+      </div>
+      <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+      <div class="badge" id="questionBadge"></div>
+      <h2 id="questionText"></h2>
+      <div class="choices" id="choices"></div>
+      <div class="feedback" id="feedback"></div>
+      <button class="primary" id="nextButton" onclick="nextQuestion()" style="display:none;">次の問題へ</button>
+    </section>
+
+    <section class="card" id="resultScreen" style="display:none;">
+      <div class="badge">結果発表</div>
+      <h1>おつかれさまでした！</h1>
+      <div class="result-score" id="finalScore"></div>
+      <p id="resultMessage"></p>
+      <button class="primary" onclick="restartQuiz()">もう一度挑戦する</button>
+      <button class="ghost" onclick="shareResult()">結果をコピーする</button>
+      <div class="small">iU 情報経営イノベーション専門職大学</div>
+    </section>
+  </main>
+
+  <script>
+    const quiz = [
+      {
+        title: "第1問",
+        question: "江端教授の出生地はどこでしょう？",
+        choices: ["大阪", "東京", "ニューヨーク", "ロンドン"],
+        answer: 2,
+        note: "実はニューヨーク生まれ。最初からちょっと意外ですね。"
+      },
+      {
+        title: "第2問",
+        question: "江端教授が、アメリカ留学中に「経営学修士（MBA）」を取得した大学はどこでしょう？",
+        choices: ["ハーバード大学", "オックスフォード大学", "スタンフォード大学", "ケンブリッジ大学"],
+        answer: 2,
+        note: "スタンフォード大学で、テクノロジーと経営を学びました。"
+      },
+      {
+        title: "第3問",
+        question: "江端教授が過去に在籍していた会社では“ない”ものは？",
+        choices: ["マイクロソフト", "ディー・エヌ・エー（DeNA）", "コカ・コーラ", "グーグル"],
+        answer: 3,
+        note: "マイクロソフト、DeNA、コカ・コーラなどで、マーケティングやDXに関わってきました。"
+      },
+      {
+        title: "第4問",
+        question: "江端教授が、昨年特に力を入れて行った外部集中講座（Bootcamp）のテーマはどれでしょう？",
+        choices: ["生成AI", "マーケティング", "起業論", "eスポーツ"],
+        answer: 0,
+        note: "生成AIを、ただのツールではなく“共同作業者”として使う考え方を大切にしています。"
+      },
+      {
+        title: "第5問",
+        question: "授業で対談したのは、堀江貴文さんと誰でしょう？",
+        choices: ["ロサンゼルス・ドジャース 大谷翔平さん", "フジテレビジョン 清水賢治社長", "テスラ イーロン・マスクさん", "ソフトバンク 孫正義さん"],
+        answer: 1,
+        note: "iUでは、社会の第一線で活躍する方々との実践的な学びも大切にしています。"
+      },
+      {
+        title: "第6問",
+        question: "江端教授が顧問をしているiUのサークルはどれでしょう？",
+        choices: ["起業サークル", "ダンスサークル", "軽音サークル", "料理研究会"],
+        answer: 0,
+        note: "起業を身近に感じられるのも、iUらしさの一つです。"
+      },
+      {
+        title: "第7問",
+        question: "江端教授が最近よく見に行っているものはどれでしょう？",
+        choices: ["eスポーツ大会", "スタートアップイベント", "AI関連イベント", "上記すべて"],
+        answer: 3,
+        note: "現場に足を運び、最新の変化を学生にも伝えています。"
+      }
+    ];
+
+    let current = 0;
+    let score = 0;
+    let answered = false;
+
+    function startQuiz() {
+      document.getElementById("startScreen").style.display = "none";
+      document.getElementById("quizScreen").style.display = "block";
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      answered = false;
+      const q = quiz[current];
+      document.getElementById("questionCount").textContent = `${current + 1} / ${quiz.length}`;
+      document.getElementById("scoreCount").textContent = `正解 ${score}問`;
+      document.getElementById("progressBar").style.width = `${(current / quiz.length) * 100}%`;
+      document.getElementById("questionBadge").textContent = q.title;
+      document.getElementById("questionText").textContent = q.question;
+      document.getElementById("feedback").style.display = "none";
+      document.getElementById("feedback").className = "feedback";
+      document.getElementById("nextButton").style.display = "none";
+
+      const choicesEl = document.getElementById("choices");
+      choicesEl.innerHTML = "";
+      q.choices.forEach((choice, index) => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.textContent = `${String.fromCharCode(65 + index)}. ${choice}`;
+        btn.onclick = () => selectAnswer(index, btn);
+        choicesEl.appendChild(btn);
+      });
+    }
+
+    function selectAnswer(index, selectedButton) {
+      if (answered) return;
+      answered = true;
+
+      const q = quiz[current];
+      const buttons = document.querySelectorAll(".choice");
+      buttons.forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === q.answer) btn.classList.add("correct");
+      });
+
+      const feedback = document.getElementById("feedback");
+      if (index === q.answer) {
+        score++;
+        feedback.classList.add("ok");
+        feedback.innerHTML = `<strong>正解です！</strong><span>${q.note}</span>`;
+      } else {
+        selectedButton.classList.add("wrong");
+        feedback.classList.add("ng");
+        feedback.innerHTML = `<strong>惜しいです！ 正解は ${String.fromCharCode(65 + q.answer)} です。</strong><span>${q.note}</span>`;
+      }
+
+      feedback.style.display = "block";
+      document.getElementById("scoreCount").textContent = `正解 ${score}問`;
+      document.getElementById("nextButton").textContent = current === quiz.length - 1 ? "結果を見る" : "次の問題へ";
+      document.getElementById("nextButton").style.display = "block";
+      document.getElementById("progressBar").style.width = `${((current + 1) / quiz.length) * 100}%`;
+    }
+
+    function nextQuestion() {
+      current++;
+      if (current >= quiz.length) {
+        showResult();
+      } else {
+        renderQuestion();
+      }
+    }
+
+    function showResult() {
+      document.getElementById("quizScreen").style.display = "none";
+      document.getElementById("resultScreen").style.display = "block";
+      document.getElementById("finalScore").textContent = `${score} / ${quiz.length}`;
+
+      let message = "";
+      if (score === quiz.length) {
+        message = "満点です！ 江端教授マスターですね。iUの雰囲気もかなり掴めています。";
+      } else if (score >= 5) {
+        message = "すばらしいです！ 江端教授とiUのことをかなり知っていただけました。";
+      } else if (score >= 3) {
+        message = "いい感じです！ iUには、まだまだ面白い学びや出会いがあります。";
+      } else {
+        message = "ここからです！ 今日をきっかけに、iUのことを少しずつ知ってください。";
+      }
+      document.getElementById("resultMessage").textContent = message;
+    }
+
+    function restartQuiz() {
+      current = 0;
+      score = 0;
+      document.getElementById("resultScreen").style.display = "none";
+      document.getElementById("quizScreen").style.display = "block";
+      renderQuestion();
+    }
+
+    function shareResult() {
+      const text = `iU 江端教授クイズの結果：${score}/${quiz.length}問正解！`;
+      if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => alert("結果をコピーしました"));
+      } else {
+        alert(text);
+      }
+    }
+  </script>
+</body>
+</html>
