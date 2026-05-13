@@ -234,7 +234,8 @@
       <h1>おつかれさまでした！</h1>
       <div class="result-score" id="finalScore"></div>
       <p id="resultMessage"></p>
-      <button class="primary" onclick="restartQuiz()">もう一度挑戦する</button>
+      <button class="primary" onclick="postToX()">Xで結果を投稿する</button>
+      <button class="ghost" onclick="restartQuiz()">もう一度挑戦する</button>
       <button class="ghost" onclick="shareResult()">結果をコピーする</button>
       <div class="small">iU 情報経営イノベーション専門職大学</div>
     </section>
@@ -397,6 +398,14 @@
       } else {
         alert(text);
       }
+    }
+
+    function postToX() {
+      const url = encodeURIComponent(window.location.href);
+      const text = encodeURIComponent(`iU 江端教授クイズに挑戦しました！
+結果は ${score}/${quiz.length}問正解でした。
+#iU #情報経営イノベーション専門職大学 #江端教授クイズ`);
+      window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, "_blank");
     }
   </script>
 </body>
